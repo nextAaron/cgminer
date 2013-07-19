@@ -442,6 +442,9 @@ struct cgpu_info {
 		struct cg_usb_device *usbdev;
 #endif
 	};
+#ifdef USE_ICARUS
+	int device_fd;
+#endif
 #ifdef USE_AVALON
 	struct work **works;
 	int work_array;
