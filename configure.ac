@@ -243,7 +243,24 @@ AC_ARG_ENABLE([icarus],
 	)
 if test "x$icarus" = xyes; then
 	AC_DEFINE([USE_ICARUS], [1], [Defined to 1 if Icarus support is wanted])
+	AC_ARG_WITH([libudev], [AC_HELP_STRING([--without-libudev], [Autodetect FPGAs using libudev (default enabled)])],
+    [libudev=$withval],
+    [libudev=auto]
+    )
+  if test "x$libudev" = "xyes"; then
+    AC_CHECK_HEADER([libudev.h],[
+      libudev=yes
+      UDEV_LIBS=-ludev
+      AC_DEFINE([HAVE_LIBUDEV], [1], [Defined to 1 if libudev is wanted])
+    ], [
+      if test "x$libudev" = "xyes"; then
+        AC_MSG_ERROR([libudev not found])
+      fi
+      libudev=no
+    ])
+  fi 
 fi
+AM_CONDITIONAL([HAVE_LIBUDEV], [test x$libudev = xyes])
 AM_CONDITIONAL([HAS_ICARUS], [test x$icarus = xyes])
 
 avalon="no"
@@ -303,7 +320,7 @@ else
 	])
 fi
 
-AM_CONDITIONAL([NEED_FPGAUTILS], [test x$modminer$ztex != xnono])
+AM_CONDITIONAL([NEED_FPGAUTILS], [test x$modminer$ztex$icarus != xnonono])
 AM_CONDITIONAL([NEED_USBUTILS_C], [test x$avalon$bitforce$modminer$bflsc$icarus != xnonononono])
 AM_CONDITIONAL([HAVE_CURSES], [test x$curses = xyes])
 AM_CONDITIONAL([WANT_JANSSON], [test x$request_jansson = xtrue])
@@ -421,6 +438,7 @@ AC_SUBST(PDCURSES_LIBS)
 AC_SUBST(WS2_LIBS)
 AC_SUBST(MM_LIBS)
 AC_SUBST(MATH_LIBS)
+AC_SUBST(UDEV_LIBS)
 AC_SUBST(ADL_CPPFLAGS)
 
 AC_CONFIG_FILES([
@@ -517,12 +535,16 @@ else
 	echo "  Ztex.FPGAs...........: Disabled"
 fi
 
+if test "x$icarus" == xyes; then
+  echo "  libudev.detection....: $libudev"
+fi 
+
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS $LIBUSB_CFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS $PTHREAD_FLAGS"
-echo "  LDADD................: $DLOPEN_FLAGS $LIBCURL_LIBS $JANSSON_LIBS $PTHREAD_LIBS $OPENCL_LIBS $NCURSES_LIBS $PDCURSES_LIBS $WS2_LIBS $MATH_LIBS $LIBUSB_LIBS"
+echo "  LDADD................: $DLOPEN_FLAGS $LIBCURL_LIBS $JANSSON_LIBS $PTHREAD_LIBS $OPENCL_LIBS $NCURSES_LIBS $PDCURSES_LIBS $WS2_LIBS $MATH_LIBS $UDEV_LIBS $LIBUSB_LIBS"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"

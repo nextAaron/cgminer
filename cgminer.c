@@ -62,8 +62,10 @@
 	#include <sys/wait.h>
 #endif
 
-#if defined(USE_BITFORCE) || defined(USE_ICARUS) || defined(USE_AVALON) || defined(USE_MODMINER)
+#if defined(USE_BITFORCE) || defined(USE_AVALON) || defined(USE_MODMINER)
 #	define USE_FPGA
+#elif defined(USE_ICARUS)
+# define USE_FPGA_SERIAL
 #elif defined(USE_ZTEX)
 #	define USE_FPGA
 #endif
