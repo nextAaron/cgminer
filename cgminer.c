@@ -12,7 +12,7 @@
 #include "config.h"
 
 #ifdef HAVE_CURSES
-#include <ncurses/curses.h>
+#include <curses.h>
 #endif
 
 #include <stdio.h>
@@ -2940,7 +2940,7 @@ static void __kill_work(void)
 		if (thr && PTH(thr) != 0L)
 			pth = &thr->pth;
 		thr_info_cancel(thr);
-#ifdef WIN32
+#ifndef WIN32
 		if (pth && *pth)
 			pthread_join(*pth, NULL);
 #else

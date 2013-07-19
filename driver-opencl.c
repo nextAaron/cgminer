@@ -12,7 +12,7 @@
 #include "config.h"
 
 #ifdef HAVE_CURSES
-#include <ncurses/curses.h>
+#include <curses.h>
 #endif
 
 #include <string.h>
