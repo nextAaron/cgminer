@@ -1,0 +1,1 @@
+LIBCURL_CFLAGS=-I/opt/ported/include LIBCURL_LIBS="-lcurl -L/opt/ported/lib" LIBUSB_CFLAGS=-I/opt/local/include LIBUSB_LIBS="-lusb-1.0 -L/opt/local/lib" ./configure --disable-opencl --enable-icarus --build=x86_64-pc-mingw32 --prefix=/opt/local

@@ -47,7 +47,7 @@ static inline int nanosleep(const struct timespec *req, struct timespec *rem)
 }
 #endif
 
-static inline int sleep(unsigned int secs)
+/*static inline int sleep(unsigned int secs)
 {
 	struct timespec req, rem;
 	req.tv_sec = secs;
@@ -56,6 +56,7 @@ static inline int sleep(unsigned int secs)
 		return 0;
 	return rem.tv_sec + (rem.tv_nsec ? 1 : 0);
 }
+*/
 
 enum {
 	PRIO_PROCESS		= 0,
