@@ -36,7 +36,7 @@ if len(sys.argv) < 2:
 	sys.exit("Aborting")
 
 # Open with a 10 second timeout - just to be sure
-ser = serial.Serial(sys.argv[1], 115200, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, 10, False, False, 5, False, None)
+ser = serial.Serial(sys.argv[1], 115200, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, 20, False, False, 5, False, None)
 
 if sys.argv[2] == "icarus":
 

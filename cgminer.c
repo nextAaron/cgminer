@@ -4758,11 +4758,13 @@ static void stratum_share_result(json_t *val, json_t *res_val, json_t *err_val,
 	uint32_t *hash32;
 	char diffdisp[16];
 	int intdiff;
+	uint32_t nonce = *((uint32_t *)(work->data + 76));
 
 	hash32 = (uint32_t *)(work->hash);
 	intdiff = floor(work->work_difficulty);
 	suffix_string(work->share_diff, diffdisp, 0);
-	sprintf(hashshow, "%08lx Diff %s/%d%s", (unsigned long)htole32(hash32[6]), diffdisp, intdiff,
+
+	sprintf(hashshow, "%08lx %08lx %s %s/%d%s", (unsigned long)htole32(hash32[6]), nonce, work->job_id, diffdisp, intdiff,
 		work->block? " BLOCK!" : "");
 	share_result(val, res_val, err_val, work, hashshow, false, "");
 }
@@ -5142,8 +5144,8 @@ static void *stratum_sthread(void *userdata)
 			pool->rpc_user, work->job_id, work->nonce2, work->ntime, noncehex, sshare->id);
 		free(noncehex);
 
-		applog(LOG_INFO, "Submitting share %08lx to pool %d",
-					(long unsigned int)htole32(hash32[6]), pool->pool_no);
+		applog(LOG_INFO, "Submitting share %08lx nonce %08lx to pool %d",
+					(long unsigned int)htole32(hash32[6]), nonce, pool->pool_no);
 
 		/* Try resubmitting for up to 2 minutes if we fail to submit
 		 * once and the stratum pool nonce1 still matches suggesting
@@ -5730,7 +5732,7 @@ bool submit_nonce(struct thr_info *thr, struct work *work, uint32_t nonce)
 
 	diff1targ = opt_scrypt ? 0x0000ffffUL : 0;
 	if (be32toh(hash2_32[7]) > diff1targ) {
-		applog(LOG_INFO, "%s%d: invalid nonce - HW error",
+		applog(LOG_WARNING, "%s%d: invalid nonce - HW error",
 		       thr->cgpu->drv->name, thr->cgpu->device_id);
 
 		inc_hw_errors(thr);

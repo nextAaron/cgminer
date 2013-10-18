@@ -523,7 +523,7 @@ static bool icarus_detect_one(const char *devpath)
 	const char golden_ob[] =
 		"4679ba4ec99876bf4bfe086082b40025"
 		"4df6c356451471139a3afa71e48f544a"
-		"00000000000000000000000000000000"
+		"0000000000000000000000000000b604"
 		"0000000087320b1a1426674f2fa722ce";
 
 	const char golden_nonce[] = "000187a2";
@@ -679,8 +679,12 @@ static int64_t icarus_scanhash(struct thr_info *thr, struct work *work,
 
 	memset(ob_bin, 0, sizeof(ob_bin));
 	memcpy(ob_bin, work->midstate, 32);
+	memcpy(ob_bin + 46, work->target + 32 - 6, 2);//Send 16-bit target
+	//char *htarget = bin2hex(work->target, 32);
+	//applog(LOG_INFO, "Target %s", htarget);
 	memcpy(ob_bin + 52, work->data + 64, 12);
 	rev(ob_bin, 32);
+	rev(ob_bin + 46, 2);
 	rev(ob_bin + 52, 12);
 #ifndef WIN32
 	tcflush(fd, TCOFLUSH);
